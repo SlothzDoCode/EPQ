@@ -1,7 +1,9 @@
-# EPQ
+# EPQ ideas
 
-- how using telemetry can improve lap times in simracing
+- How using telemetry can improve lap times in simracing and other motorsports?
 
-- set a benchmark laptime using a set track, car and setup (ray ff1600 at Oulton park circuit)
+- How competetive can a rebuilt kart be? 
+
+- How suspension effects engine cooling in f1?
 
 - 
