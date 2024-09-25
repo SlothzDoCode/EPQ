@@ -1,9 +1,11 @@
 # EPQ ideas
 
-- How using telemetry can improve lap times in simracing and other motorsports?
+- How using telemetry can improve lap times in simracing and other motorsports? (essay)
 
-- How competetive can a rebuilt kart be? 
+- How competetive can a rebuilt kart be? (artifact) 
 
-- How suspension effects engine cooling in f1?
+- How suspension effects engine cooling in f1? (essay)
+  
+- How suspension effects engine cooling in f1? (artifact)
 
 - 
