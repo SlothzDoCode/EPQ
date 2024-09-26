@@ -7,5 +7,3 @@
 - How suspension effects engine cooling in f1? (essay)
   
 - How suspension effects engine cooling in f1? (artifact)
-
-- 
