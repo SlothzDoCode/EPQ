@@ -6,4 +6,6 @@
 
 - Is it possible to make motorsport safer than it currently is? (essay) Y
 
-- How effective is AI in motorsport? (essay) Y
+- How effective is AI in motorsport strategy? (essay) Y
+
+- 
