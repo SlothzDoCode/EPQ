@@ -9,4 +9,3 @@
 - How effective is AI in motorsport strategy? (essay) 
 
 - How can machine learning be used in motorsport? (artifact)
-- 
