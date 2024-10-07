@@ -1,6 +1,8 @@
 # EPQ ideas
 
-- How using telemetry can improve lap times in simracing and other motorsports? (essay) 
+- How using telemetry can improve lap times in simracing and other motorsports? (essay)
+
+- How data analysis can make people quicker. (artifact)
 
 - How suspension effects engine cooling in f1? (essay) 
 
