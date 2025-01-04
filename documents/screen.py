@@ -64,7 +64,7 @@ def main():
         
       elif from_client == "Red flag":
         current_bg = "red"
-        diplay.configure(bg=current_bg)
+        display.configure(bg=current_bg)
         position_lbl.configure(bg=current_bg, fg=fg_light)
         timer_lbl.configure(bg=current_bg, fg=fg_light)
       
@@ -104,7 +104,24 @@ def main():
 
 if __name__ == '__main__':
   display = tk.Tk()
-  display.configure(bg-current_bg)
+  display.configure(bg=current_bg)
   threading.Thread(target=main).start()
 
-  position_lbl = tk.Label()
+  position_lbl = tk.Label(
+    bg=current_bg,
+    fg="white",
+    text=current_pos,
+    width=8,
+    font=("Arial", 60))
+  position_lbl.place(x=400,y=300)
+
+  timer_lbl = tk.Tk(
+    bg=current_bg,
+    fg="white",
+    text="",
+    width=8,
+    font=("Arial", 60))
+  timer_lbl.place(x=300,y=50)
+
+  display.attributes('-fullscreen',True)
+  display.mainloop()
