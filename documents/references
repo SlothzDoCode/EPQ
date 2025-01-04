@@ -2,4 +2,6 @@
 
 - https://arxiv.org/pdf/2306.16088
 
--
+- this link (https://forums.raspberrypi.com/viewtopic.php?t=171986) helped sort issues found with comunication between pi script (python) and controller script (swift)
+
+- this link (https://forums.raspberrypi.com/viewtopic.php?t=230068) is similar to code used for server side (pi script)
