@@ -95,4 +95,16 @@ def main():
             timer_lbl.after(1000, countdown, count-0.01)
 
         countdown(countdown_time)
-    
+      
+      elif from_client == "exit_server":
+        display.destroy()
+        exit()
+      
+      from_client = ''
+
+if __name__ == '__main__':
+  display = tk.Tk()
+  display.configure(bg-current_bg)
+  threading.Thread(target=main).start()
+
+  position_lbl = tk.Label()
