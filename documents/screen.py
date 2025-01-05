@@ -95,7 +95,7 @@ def main():
           if decimal_part > 0.59:
               count = minutes + 0.59
       
-          timer_lbl.configure(text=round(count, 2))
+          timer_lbl.configure(text="{:.2f}".format(count))
     
           if count > 0:
               timer_lbl.after(1000, countdown, count - 0.01)
