@@ -89,10 +89,19 @@ def main():
       elif from_client in countdown_timer:
         countdown_time = int(from_client[4:])
         def countdown(count):
+          minutes = int(count)
+          decimal_part = count - minutes
+      
+          # Cap the decimal part to 0.60 if it exceeds
+          if decimal_part > 0.60:
+              count = minutes + 0.60
+      
+          # Update the label with the rounded value
           timer_lbl.configure(text=round(count, 2))
-          
+      
+          # Continue countdown if count is greater than 0
           if count > 0:
-            timer_lbl.after(1000, countdown, count-0.01)
+              timer_lbl.after(1000, countdown, count - 0.01)
 
         countdown(countdown_time)
       
