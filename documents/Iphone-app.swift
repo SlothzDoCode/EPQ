@@ -138,23 +138,7 @@ struct SettingsView:View {
                         .onChange(of: darkMode.darkMode, initial: false) {oldValue, newValue in print("Dark mode changed from \(oldValue) to \(newValue)")}
                 }
             }.navigationTitle("Settings")
-            
-            if darkMode.darkMode == true {
-                testingView()
-                    .preferredColorScheme(.dark)
-                
-                SettingsView()
-                    .preferredColorScheme(.dark)
-            
-                
-                
-            }else if darkMode.darkMode == false {
-                testingView()
-                    .preferredColorScheme(.light)
-                
-                SettingsView()
-                    .preferredColorScheme(.light)
-            }
+            .preferredColorScheme(darkMode.darkMode ? .dark : .light)
         }
     }
 }
