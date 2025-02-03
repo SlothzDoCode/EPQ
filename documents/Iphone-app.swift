@@ -114,7 +114,7 @@ struct testingView:View {
                     })
                     
                     HStack(spacing:7,content:{
-                        Button(action:{client_connect(code: "blue")}){
+                        Button(action:{client_connect(code: "Blue")}){
                             Text("Blue Flag")
                         }
                         .buttonStyle(.bordered)
