@@ -106,7 +106,15 @@ def main():
         display.destroy()
         exit()
       
-      from_client = ''
+      elif from_client[:7] == "leading" or from_client[:8] == "trailing": 
+        if from_client[:7] == "leading":
+          leadingCar_lbl.configure(text="{} is infront".format(from_client[8:]))
+        elif from_client[:8] == "trailing":
+          trailingCar_lbl.configure(text="{} is behind".format(from_client[9:]))
+        else:
+          raise ValueError("e","value not excepted")    
+      
+      from_client = '' 
 
 if __name__ == '__main__':
   display = tk.Tk()
@@ -128,6 +136,20 @@ if __name__ == '__main__':
     width=8,
     font=("Arial", 60))
   timer_lbl.place(x=300,y=50)
+  
+  leadingCar_lbl = tk.Tk(
+    bg=current_bg,
+    fg="white",
+    text="",
+    width=8,
+    font=("Arial", 60))
+  
+  trailingCar_lbl = tk.Tk(
+    bg=current_bg,
+    fg="white",
+    text="",
+    width=8,
+    font=("Arial", 60))
 
   display.attributes('-fullscreen',True)
   display.mainloop()
