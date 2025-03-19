@@ -124,8 +124,24 @@ def pitstop_cmd():
         #send a message
         client.send(msg_pitstop.encode())
     except:
-        messagebox.showerror("..","Failed to send to dash")    
-
+        messagebox.showerror("..","Failed to send to dash") 
+        
+def leading_cmd():
+    try:
+        msg_leadingCar = "leading-" 
+        
+        client.send(msg_leadingCar.encode())          
+    except:
+            messagebox.showerror("..","Failed to send to dash")
+            
+def trailing_cmd():
+    try:
+        msg_trailingCar = "trailing-" 
+        
+        client.send(msg_trailingCar.encode())          
+    except:
+            messagebox.showerror("..","Failed to send to dash")            
+    
 #*set up visual display 
 
 display = tk.Tk()
@@ -216,6 +232,12 @@ Pitstop_btn.grid(row=8, column=10, pady=50, padx=50)
 
 timerControl_display = tk.Label(text="")
 timerControl_display.grid(row=10, column=5, pady=50, padx=50)
+
+leadingCar_ent = tk.Entry()
+leadingCar_ent.grid(row=10, column=6, pady=50, padx=50)
+
+leadingCar_ent.bind(leading_cmd(leadingCar_ent.get()))
+
 
 #*start-up
 
