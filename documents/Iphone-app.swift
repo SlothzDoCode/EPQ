@@ -16,7 +16,7 @@ class globalSetings: ObservableObject {
 
 import CoreBluetooth
 
-class BLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
+class BLEPeripheralManager: NSObject, ObservableObject, CBPeripheralManagerDelegate {
     var peripheralManager: CBPeripheralManager!
     var transferCharacteristic: CBMutableCharacteristic!
     
@@ -49,11 +49,11 @@ class BLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
     }
     
     func updateValue(_ data:Data){
-        peripheralManager.updateValue(
-            data,
-            for: transferCharacteristic,
-            onSubscribedCentrals: nil
-        )
+        guard let characteristic = transferCharacteristic else{
+            print("transferCharacteristic is nil")
+            return
+        }
+        peripheralManager.updateValue(data, for: characteristic, onSubscribedCentrals: nil)
     }
     
 }
@@ -66,12 +66,15 @@ struct testingView:View {
     @State private var position_options: String = "Select a Position"
     @State private var timer_options: String = "Select a timer"
     @State var isPresenting = false
-    @State var code: String = ""
+    @StateObject private var bleManager = BLEPeripheralManager()
 
-    func client_connect(_: code){
+    func client_connect(code:String){
         
-        let data = code.data(using: .utf8)!
-        updateValue(data)
+        guard let data = code.data(using: .utf8) else{
+            print("Failed to encode to UTF-8")
+            return
+        }
+        bleManager.updateValue(data)
     }
     
     var body: some View {
