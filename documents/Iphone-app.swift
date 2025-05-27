@@ -9,37 +9,54 @@
 
 class globalSetings: ObservableObject {
     @Published var darkMode: Bool = false
+    
 }
 
+//!! client code
 
-//!! socket code
-import SocketIO
+import CoreBluetooth
 
-func client_connect(code: String){
-    let manager = SocketManager(socketURL: URL(string:"http://localhost:2325")!, config:[.log(true), .compress])
-    let socket = manager.defaultSocket
+class BLEPeripheralManager: NSObject, CBPeripheralManagerDelegate {
+    var peripheralManager: CBPeripheralManager!
+    var transferCharacteristic: CBMutableCharacteristic!
     
-    socket.on(clientEvent: .connect) {data, ack in print("socket connected")}
-
-    socket.connect()
-    
-    if code == "Green" {
-        socket.emit("chat message", "Green_flag")
+    override init() {
+        super.init()
+        peripheralManager = CBPeripheralManager(delegate: self, queue: nil)
     }
     
-    if code == "Yellow" {
-        socket.emit("chat message", "Yellow_flag")
+    func peripheralManagerDidUpdateState(_ peripheral: CBPeripheralManager) {
+        if peripheral.state == .poweredOn{
+            let serviceUUID = CBUUID(string: "1234")
+            let charUUID = CBUUID(string: "ABCD")
+            
+            transferCharacteristic = CBMutableCharacteristic(
+                type: charUUID,
+                properties: [.read,.notify],
+                value: nil,
+                permissions: [.readable]
+            )
+            
+            let service = CBMutableService(type: serviceUUID, primary: true)
+            service.characteristics = [transferCharacteristic]
+            
+            peripheralManager.add(service)
+            peripheralManager.startAdvertising([
+                CBAdvertisementDataServiceUUIDsKey: [serviceUUID],
+                CBAdvertisementDataLocalNameKey: "MyBLEPeripheral"
+            ])
+        }
     }
     
-    if code == "Red"{
-        socket.emit("chat message", "Red_flag")
+    func updateValue(_ data:Data){
+        peripheralManager.updateValue(
+            data,
+            for: transferCharacteristic,
+            onSubscribedCentrals: nil
+        )
     }
     
-    if code == "Blue"{
-        socket.emit("chat message", "Blue_flag")
-    }
 }
-
 
 //!! display code
 
@@ -49,6 +66,13 @@ struct testingView:View {
     @State private var position_options: String = "Select a Position"
     @State private var timer_options: String = "Select a timer"
     @State var isPresenting = false
+    @State var code: String = ""
+
+    func client_connect(_: code){
+        
+        let data = code.data(using: .utf8)!
+        updateValue(data)
+    }
     
     var body: some View {
         NavigationView{
@@ -58,7 +82,7 @@ struct testingView:View {
                     SettingsView()
                 }, label: {Text(Image(systemName: "gear"))
                         .frame(maxWidth: .infinity, alignment:.trailing)
-                })
+                }).disabled(true)
                 
                 Section() {
                     HStack(spacing:7,content:{
@@ -149,4 +173,3 @@ struct SettingsView:View {
 #Preview {
     testingView()
 }
-
