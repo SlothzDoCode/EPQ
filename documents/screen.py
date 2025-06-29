@@ -1,12 +1,11 @@
-import socket
+from flask import *
+from flask_socketio import SocketIO
+from flask_cors import CORS
 import tkinter as tk
+from tkinter import *
 import threading
-import time
 
-#var's
-
-host = '192.168.1.76'
-port = 2325
+#* global vars
 
 current_bg = "black"
 
@@ -16,140 +15,106 @@ fg_light = "white"
 positions = ["pos 1","pos 2","pos 3","pos 4","pos 5","pos 6","pos 7","pos 8","pos 9","pos 10","pos 11","pos 12","pos 13","pos 14","pos 15","pos 16"]
 countdown_timer = ["time5","time10","time15","time20","time25","time30","time35","time40","time45","time50","time55","time60","time65","time70","time75","time80","time85","time90","time95"]
 
-current_pos = "0"
+current_pos = "0"      
 
-listener_limit = 1
+#* tkinter gui  
+        
+def tkinter_setup():
+    global display
+    global position_lbl
+    global timer_lbl
+    display = tk.Tk()
+    display.configure(bg=current_bg)
+    
+    position_lbl = tk.Label(
+        bg=current_bg,
+        fg="white",
+        text=current_pos,
+        width=8,
+        font=("Arial", 60))
+    position_lbl.place(x=400,y=300)
 
-def main():
-  global current_pos
-  global positions
-  global current_bg
-  global fg_dark
-  global fg_light
-  
-  serv = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    timer_lbl = tk.Label(
+        bg=current_bg,
+        fg="white",
+        text="",
+        width=8,
+        font=("Arial", 60))
+    timer_lbl.place(x=300,y=50)
 
-  try:
-    serv.bind((host,port))
-    print("Running ther server on {}, {}".format(host,port))
-  except:
-    print("Unable to bind host to {} and port {}".format(host,port))
+    display.attributes('-fullscreen',True)
+    display.mainloop()
 
-  serv.listen(listener_limit)
 
-  while 1:
-    conn, addr = serv.accept()
-    from_client = ''
-    print("Successfully connected to client {} {}".format(addr[0], addr[1]))
+#* flask + socketio connection
 
-    while True:
-      data = conn.recv(4096).decode()
-      if not data: break
-      from_client += data
-      from_client = str(from_client)
-      print(type(from_client))
-      print("Recieved: " + from_client)
+app= Flask(__name__)
+CORS(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
-      if from_client == "Green flag":
+@app.route('/')
+def index():
+    return render_template('ControllerFrontend.html')
+
+@socketio.on('flag_status')
+def handle_flag(data):
+    print("Flag status:", data) 
+    
+    if data == "Green Flag":
         current_bg = "green"
         display.configure(bg=current_bg)
         position_lbl.configure(bg=current_bg, fg=fg_light)
         timer_lbl.configure(bg=current_bg, fg=fg_light)
-      
-      elif from_client == "Yellow flag":
+        
+    elif data == "Yellow Flag":
         current_bg = "yellow"
         display.configure(bg=current_bg)
-        position_lbl.configure(bg=current_bg, fg=fg_dark)
-        timer_lbl.configre(bg=current_bg, fg=fg_dark)
-        
-      elif from_client == "Red flag":
-        current_bg = "red"
+        position_lbl.configure(bg=current_bg,fg=fg_dark)
+        timer_lbl.configure(bg=current_bg,fg=fg_dark)
+                 
+    elif data == "Red Flag":
+        current_bg = "Red"
         display.configure(bg=current_bg)
-        position_lbl.configure(bg=current_bg, fg=fg_light)
-        timer_lbl.configure(bg=current_bg, fg=fg_light)
-      
-      elif from_client == "Blue flag":
+        position_lbl.configure(bg=current_bg,fg=fg_light)
+        timer_lbl.configure(bg=current_bg,fg=fg_light)
+             
+    elif data == "Blue Flag":
         current_bg = "blue"
         display.configure(bg=current_bg)
-        position_lbl.configure(bg=current_bg, fg=fg_light)
-        timer_lbl.configure(bg=current_bg, fg=fg_light)
-      
-      elif from_client == "PB_alert":
+        position_lbl.configure(bg=current_bg,fg=fg_light)
+        timer_lbl.configure(bg=current_bg,fg=fg_light)
+ 
+    elif data == "PB":
         display.configure(bg="#a28834")
         position_lbl.configure(bg="#a28834", fg=fg_dark)
-        position_lbl.configure(bg="'a28834", fg=fg_dark)
-      
-      elif from_client == "PB_close":
-        ()
-      
-      elif from_client in positions:
-        current_pos = from_client
+        timer_lbl.configure(bg="#a28834", fg=fg_dark)    
+        
+    elif data == "Pitstop":
+        display.configure(bg="#c115d4")
+        position_lbl.configure(bg="#c115d4", fg=fg_dark)
+        timer_lbl.configure(bg="#c115d4", fg=fg_dark)         
+    
+    elif data in positions:
+        current_pos = data
         position_lbl.configure(text=current_pos)
         
-      elif from_client in countdown_timer:
-        countdown_time = int(from_client[4:])
-        def countdown(count):
-          minutes = int(count)
-          decimal_part = count - minutes
-    
-          if decimal_part > 0.59:
-              count = minutes + 0.59
-      
-          timer_lbl.configure(text="{:.2f}".format(count))
-    
-          if count > 0:
-              timer_lbl.after(1000, countdown, count - 0.01)
+    elif data in countdown_timer:
+        countdown_time = int(data[4:])
+        def countdown(secs):
+          mins = secs // 60
+          cusec = secs % 60
+          timer_lbl.config(text="{}:{:02}".format(mins, cusec))
 
-        countdown(countdown_time)
-      
-      elif from_client == "exit_server":
+          if secs > 0:
+            timer_lbl.after(1000, countdown, secs - 1)
+
+        countdown(countdown_time*60)    
+    
+    elif data == "Shutdown":
         display.destroy()
         exit()
-      
-      elif from_client[:7] == "leading" or from_client[:8] == "trailing": 
-        if from_client[:7] == "leading":
-          leadingCar_lbl.configure(text="{} is infront".format(from_client[8:]))
-        elif from_client[:8] == "trailing":
-          trailingCar_lbl.configure(text="{} is behind".format(from_client[9:]))
-        else:
-          raise ValueError("e","value not excepted")    
-      
-      from_client = '' 
-
-if __name__ == '__main__':
-  display = tk.Tk()
-  display.configure(bg=current_bg)
-  threading.Thread(target=main).start()
-
-  position_lbl = tk.Label(
-    bg=current_bg,
-    fg="white",
-    text=current_pos,
-    width=8,
-    font=("Arial", 60))
-  position_lbl.place(x=400,y=300)
-
-  timer_lbl = tk.Tk(
-    bg=current_bg,
-    fg="white",
-    text="",
-    width=8,
-    font=("Arial", 60))
-  timer_lbl.place(x=300,y=50)
-  
-  leadingCar_lbl = tk.Tk(
-    bg=current_bg,
-    fg="white",
-    text="",
-    width=8,
-    font=("Arial", 60))
-  
-  trailingCar_lbl = tk.Tk(
-    bg=current_bg,
-    fg="white",
-    text="",
-    width=8,
-    font=("Arial", 60))
-
-  display.attributes('-fullscreen',True)
-  display.mainloop()
+    
+if __name__ == "__main__":
+    
+    threading.Thread(target=tkinter_setup, daemon=True).start()    
+    socketio.run(app, debug=True, host='0.0.0.0', port=5000, use_reloader=False)
